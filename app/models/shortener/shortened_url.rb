@@ -22,7 +22,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
     # if we get a shortened_url object with a different owner, generate
     # new one for the new owner. Otherwise return same object
     if orig_url.is_a?(Shortener::ShortenedUrl)
-      return orig_url.owner == owner ? orig_url : generate!(orig_url.url, owner)
+      return orig_url.owner == owner ? orig_url : generate!(orig_url.url, owner, duplicates)
     end
 
     # don't want to generate the link if it has already been generated
@@ -32,7 +32,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
     unless duplicates
       scope.find_or_create_by_url(cleaned_url)
     else
-      scope.create_by_url(cleaned_url)
+      scope.create(:url=>cleaned_url)
     end
   end
 
