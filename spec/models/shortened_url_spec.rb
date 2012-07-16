@@ -57,12 +57,28 @@ describe Shortener::ShortenedUrl do
       before do
         Shortener::ShortenedUrl.any_instance.stub(:generate_unique_key).
           and_return(@existing.unique_key, "ABCDEF")
+        @existing = Shortener::ShortenedUrl.generate!("http://www.doorkeeperhq.com/",@user)           
       end
       it "should try until it finds a non-dup key" do
         short_url = Shortener::ShortenedUrl.generate!("client.doorkeeper.jp")
         short_url.should_not be_nil
         short_url.unique_key.should == "ABCDEF"
       end
+    end
+  end
+
+  context "have options for unique URL's" do    
+    before { 
+      @user = User.create
+      @existing = Shortener::ShortenedUrl.generate!("http://www.doorkeeperhq.com/",@user) 
+    }
+    it "should generate a differone one" do
+      short_url = Shortener::ShortenedUrl.generate!("http://www.doorkeeperhq.com/",@user,true)
+      short_url.should_not == @existing
+    end
+    it "should return a duplicate of previous URL" do
+      short_url = Shortener::ShortenedUrl.generate!("http://www.doorkeeperhq.com/",@user)
+      short_url.should == @existing
     end
   end
 end
