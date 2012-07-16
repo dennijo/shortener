@@ -37,7 +37,7 @@ class Shortener::ShortenedUrl < ActiveRecord::Base
   # return shortened url on success, nil on failure
   def self.generate(orig_url, owner=nil, duplicates=false)
     begin
-      generate!(orig_url, owner)
+      generate!(orig_url, owner, duplicates)
     rescue
       nil
     end
